@@ -22,8 +22,8 @@ export default function LandingPage() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setGlobalEmissions((prev) => prev + 12.87);
-    }, 10);
+      setGlobalEmissions((prev) => prev + 128.7);
+    }, 100);
     return () => clearInterval(interval);
   }, []);
 

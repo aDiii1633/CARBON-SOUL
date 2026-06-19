@@ -45,7 +45,7 @@ export default function Sidebar() {
       </div>
 
       {/* Nav list */}
-      <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
+      <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto" aria-label="Dashboard sidebar">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;

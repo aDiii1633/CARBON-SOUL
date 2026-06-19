@@ -4,57 +4,9 @@ import { prisma } from '@/lib/db/prisma';
 import { getLocalDateString, updateStreak } from '@/lib/gamification/streaks';
 import { calculateLevel } from '@/lib/gamification/points';
 import { checkBadgeEligibility } from '@/lib/gamification/badges';
-
-const PREDEFINED_ACTIONS = [
-  { actionId: 'walk-2km', title: 'Walk instead of drive (2km)', category: 'transport', co2SavedKg: 0.4, points: 20 },
-  { actionId: 'meat-free', title: 'Go meat-free today', category: 'food', co2SavedKg: 2.5, points: 50 },
-  { actionId: 'unplug-devices', title: 'Unplug unused devices', category: 'energy', co2SavedKg: 0.1, points: 10 },
-  { actionId: 'second-hand', title: 'Buy second-hand item', category: 'shopping', co2SavedKg: 1.2, points: 30 },
-  { actionId: 'compost', title: 'Compost food waste today', category: 'waste', co2SavedKg: 0.3, points: 15 },
-  { actionId: 'bus-commute', title: 'Take the bus instead of car', category: 'transport', co2SavedKg: 1.2, points: 30 },
-  { actionId: 'cold-wash', title: 'Wash clothes in cold water', category: 'energy', co2SavedKg: 0.3, points: 15 },
-  { actionId: 'no-waste', title: 'Finish all leftovers', category: 'food', co2SavedKg: 0.8, points: 20 },
-  { actionId: 'recycle-paper', title: 'Recycle paper and cardboard', category: 'waste', co2SavedKg: 0.2, points: 10 },
-  { actionId: 'no-plastic', title: 'Avoid single-use plastic', category: 'waste', co2SavedKg: 0.4, points: 15 },
-];
-
-/**
- * Deterministically generates today's 5 actions for a user based on date and userId
- */
-function getDeterministicDailyActions(userId: string, dateStr: string, topCategory: string) {
-  // A simple hashing seed
-  let hash = 0;
-  const seedString = `${userId}-${dateStr}`;
-  for (let i = 0; i < seedString.length; i++) {
-    hash = seedString.charCodeAt(i) + ((hash << 5) - hash);
-  }
-
-  // Filter actions by category
-  const topCatActions = PREDEFINED_ACTIONS.filter(a => a.category === topCategory);
-  const otherCatActions = PREDEFINED_ACTIONS.filter(a => a.category !== topCategory);
-
-  const selected: typeof PREDEFINED_ACTIONS = [];
-
-  // Pick 3 from top category (or all if we don't have enough)
-  const topCount = Math.min(3, topCatActions.length);
-  for (let i = 0; i < topCount; i++) {
-    const idx = Math.abs(hash + i) % topCatActions.length;
-    selected.push(topCatActions[idx]);
-    // remove picked action to avoid duplicates
-    topCatActions.splice(idx, 1);
-  }
-
-  // Pick remaining from other categories
-  const needed = 5 - selected.length;
-  for (let i = 0; i < needed; i++) {
-    if (otherCatActions.length === 0) break;
-    const idx = Math.abs(hash + 10 + i) % otherCatActions.length;
-    selected.push(otherCatActions[idx]);
-    otherCatActions.splice(idx, 1);
-  }
-
-  return selected;
-}
+import { PREDEFINED_ACTIONS } from '@/lib/constants/daily-actions';
+import { getDeterministicDailyActions } from '@/lib/utils/daily-action-picker';
+import { logger } from '@/lib/utils/logger';
 
 export async function GET() {
   try {
@@ -87,7 +39,7 @@ export async function GET() {
       }
     });
 
-    // 2. Generate the 5 actions
+    // 2. Generate the 5 actions using shared utility
     const generated = getDeterministicDailyActions(userId, today, topCategory);
 
     // 3. Query completed actions in the DB for today
@@ -105,7 +57,7 @@ export async function GET() {
 
     return NextResponse.json(actions, { status: 200 });
   } catch (error) {
-    console.error('GET daily actions error:', error);
+    logger.error('GET /api/actions', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
@@ -120,7 +72,7 @@ export async function POST(req: Request) {
 
     const body = await req.json();
     const { actionId } = body;
-    if (!actionId) {
+    if (!actionId || typeof actionId !== 'string') {
       return NextResponse.json({ error: 'Action ID is required' }, { status: 400 });
     }
 
@@ -196,14 +148,12 @@ export async function POST(req: Request) {
       });
 
       // 3. Check Badge Eligibility
-      // Fetch categories previously logged
       const userLogs = await tx.carbonLog.findMany({
         where: { userId },
         select: { category: true },
       });
       const categoriesLogged = Array.from(new Set(userLogs.map((l) => l.category)));
 
-      // Fetch user's existing badges
       const userBadges = await tx.badge.findMany({
         where: { userId },
         select: { badgeId: true },
@@ -242,7 +192,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
-    console.error('POST daily action error:', error);
+    logger.error('POST /api/actions', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

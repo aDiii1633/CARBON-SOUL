@@ -11,3 +11,7 @@ const { Request, Response, Headers } = require('next/dist/compiled/@edge-runtime
 global.Request = Request;
 global.Response = Response;
 global.Headers = Headers;
+
+const { ReadableStream, TransformStream } = require('stream/web');
+global.ReadableStream = ReadableStream;
+global.TransformStream = TransformStream;

@@ -63,6 +63,17 @@ describe('Carbon Calculator Logic', () => {
         plantBasedServings: 1
       })).toBe(0.12);
     });
+
+    it('should calculate meat-heavy diet defaults correctly', () => {
+      // meat-heavy default: 
+      // plantBased: 5 * 0.12 = 0.60
+      // beef: 5 * 6.61 = 33.05
+      // pork: 4 * 1.24 = 4.96
+      // chicken: 5 * 0.69 = 3.45
+      // dairy: 5 * 0.34 = 1.70
+      // total: 0.60 + 33.05 + 4.96 + 3.45 + 1.70 = 43.76
+      expect(calculateFoodEmissions({ dietType: 'meat-heavy' })).toBe(43.76);
+    });
   });
 
   // 3. Energy tests

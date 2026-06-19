@@ -10,6 +10,7 @@ import {
   calculateWasteEmissions
 } from '@/lib/carbon/calculator';
 import { calculateLevel } from '@/lib/gamification/points';
+import { logger } from '@/lib/utils/logger';
 
 export async function POST(req: Request) {
   try {
@@ -165,7 +166,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
-    console.error('Onboarding API error:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 550 });
+    logger.error('POST /api/user/onboarding', error);
+    return NextResponse.json({ error: 'Onboarding failed. Please try again later.' }, { status: 500 });
   }
 }

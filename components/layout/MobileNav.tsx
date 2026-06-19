@@ -39,11 +39,12 @@ export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-40 lg:hidden flex">
+    <div className="fixed inset-0 z-40 lg:hidden flex" role="dialog" aria-modal="true" aria-label="Mobile navigation menu">
       {/* Background overlay */}
       <div
         className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
         onClick={onClose}
+        aria-hidden="true"
       />
 
       {/* Drawer */}

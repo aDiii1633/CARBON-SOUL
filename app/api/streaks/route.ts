@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
-
-export const dynamic = 'force-dynamic';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/db/prisma';
+import { logger } from '@/lib/utils/logger';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
@@ -67,7 +68,7 @@ export async function GET() {
       },
     }, { status: 200 });
   } catch (error) {
-    console.error('Streaks API route error:', error);
+    logger.error('GET /api/streaks', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

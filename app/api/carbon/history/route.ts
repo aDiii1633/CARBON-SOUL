@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
-
-export const dynamic = 'force-dynamic';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/db/prisma';
+import { logger } from '@/lib/utils/logger';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
   try {
@@ -39,7 +40,7 @@ export async function GET(req: Request) {
       },
     }, { status: 200 });
   } catch (error) {
-    console.error('Carbon history API error:', error);
+    logger.error('GET /api/carbon/history', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

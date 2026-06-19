@@ -3,9 +3,9 @@ import { auth } from '@/auth';
 import { prisma } from '@/lib/db/prisma';
 import { carbonLogSchema } from '@/lib/validations/carbon';
 import { updateStreak, getLocalDateString } from '@/lib/gamification/streaks';
-import { calculateLevel } from '@/lib/gamification/points';
+import { calculateLevel, REWARD_POINTS } from '@/lib/gamification/points';
 import { checkBadgeEligibility } from '@/lib/gamification/badges';
-import { REWARD_POINTS } from '@/lib/gamification/points';
+import { logger } from '@/lib/utils/logger';
 
 export async function POST(req: Request) {
   try {
@@ -129,7 +129,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
-    console.error('Carbon log API error:', error);
+    logger.error('POST /api/carbon/calculate', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

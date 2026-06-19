@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/db/prisma';
 import { generatePersonalizedTips, UserContext } from '@/lib/ai/anthropic';
+import { logger } from '@/lib/utils/logger';
 
 // In-memory rate limiter: Record<userId, { count: number, resetTime: number }>
 const rateLimits: Record<string, { count: number; resetTime: number }> = {};
@@ -34,9 +35,11 @@ export async function POST(req: Request) {
       rateLimits[userId] = { count: 1, resetTime: now + 3600000 };
     }
 
-    // 3. Parse user query & context
+    // 3. Parse user query & context (sanitize to prevent prompt injection)
     const body = await req.json();
-    const query = body.query || 'Give me personalized tips to reduce my carbon footprint today.';
+    const rawQuery = typeof body.query === 'string' ? body.query : 'Give me personalized tips to reduce my carbon footprint today.';
+    // Strip HTML tags and limit length
+    const query = rawQuery.replace(/<[^>]*>/g, '').trim().slice(0, 500);
     const forceFresh = body.forceFresh || false;
 
     // 4. Check cache for general tips query
@@ -157,7 +160,7 @@ Profile details: Transport mode = ${profile?.transportMode || 'car'}, Diet = ${p
       },
     });
   } catch (error) {
-    console.error('Tips API route error:', error);
+    logger.error('POST /api/ai/tips', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

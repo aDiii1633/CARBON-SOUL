@@ -27,7 +27,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
   };
 
   return (
-    <header className="h-16 bg-white border-b border-gray-200 fixed top-0 right-0 left-0 lg:left-64 z-20 flex items-center justify-between px-6">
+    <header className="h-16 bg-white border-b border-gray-200 fixed top-0 right-0 left-0 lg:left-64 z-20 flex items-center justify-between px-6" role="banner">
       {/* Left side: Hamburger button + Page Title */}
       <div className="flex items-center space-x-4">
         <button
@@ -37,9 +37,9 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
         >
           <Menu className="h-6 w-6" />
         </button>
-        <h1 className="text-xl font-bold text-gray-800 tracking-tight transition-all duration-200">
+        <h2 className="text-xl font-bold text-gray-800 tracking-tight transition-all duration-200">
           {getPageTitle()}
-        </h1>
+        </h2>
       </div>
 
       {/* Right side: Streak and level indicator */}

@@ -5,6 +5,7 @@ import { prisma } from '@/lib/db/prisma';
 import StoreInitializer from '@/components/providers/StoreInitializer';
 import DashboardLayoutClient from './DashboardLayoutClient';
 import { getLocalDateString } from '@/lib/gamification/streaks';
+import { getDeterministicDailyActions } from '@/lib/utils/daily-action-picker';
 
 export const dynamic = 'force-dynamic';
 
@@ -53,21 +54,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   });
   const completedActionIds = completedDailyActions.map(a => a.actionId);
 
-  // Re-generate deterministic daily actions list matching the API
-  const PREDEFINED_ACTIONS = [
-    { actionId: 'walk-2km', title: 'Walk instead of drive (2km)', category: 'transport', co2SavedKg: 0.4, points: 20 },
-    { actionId: 'meat-free', title: 'Go meat-free today', category: 'food', co2SavedKg: 2.5, points: 50 },
-    { actionId: 'unplug-devices', title: 'Unplug unused devices', category: 'energy', co2SavedKg: 0.1, points: 10 },
-    { actionId: 'second-hand', title: 'Buy second-hand item', category: 'shopping', co2SavedKg: 1.2, points: 30 },
-    { actionId: 'compost', title: 'Compost food waste today', category: 'waste', co2SavedKg: 0.3, points: 15 },
-    { actionId: 'bus-commute', title: 'Take the bus instead of car', category: 'transport', co2SavedKg: 1.2, points: 30 },
-    { actionId: 'cold-wash', title: 'Wash clothes in cold water', category: 'energy', co2SavedKg: 0.3, points: 15 },
-    { actionId: 'no-waste', title: 'Finish all leftovers', category: 'food', co2SavedKg: 0.8, points: 20 },
-    { actionId: 'recycle-paper', title: 'Recycle paper and cardboard', category: 'waste', co2SavedKg: 0.2, points: 10 },
-    { actionId: 'no-plastic', title: 'Avoid single-use plastic', category: 'waste', co2SavedKg: 0.4, points: 15 },
-  ];
-
-  // Pick top category based on logs
+  // Determine the user's highest-emission category for action targeting
   const categoryTotals: Record<string, number> = { transport: 0, energy: 0, food: 0, shopping: 0, waste: 0 };
   logs.forEach((log) => {
     if (categoryTotals[log.category] !== undefined) {
@@ -83,28 +70,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
     }
   });
 
-  // Hashing to deterministically select 5 actions
-  let hash = 0;
-  const seedString = `${userId}-${today}`;
-  for (let i = 0; i < seedString.length; i++) {
-    hash = seedString.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const topCatActions = PREDEFINED_ACTIONS.filter(a => a.category === topCategory);
-  const otherCatActions = PREDEFINED_ACTIONS.filter(a => a.category !== topCategory);
-  const chosenActionsList = [];
-  const topCount = Math.min(3, topCatActions.length);
-  for (let i = 0; i < topCount; i++) {
-    const idx = Math.abs(hash + i) % topCatActions.length;
-    chosenActionsList.push(topCatActions[idx]);
-    topCatActions.splice(idx, 1);
-  }
-  const needed = 5 - chosenActionsList.length;
-  for (let i = 0; i < needed; i++) {
-    if (otherCatActions.length === 0) break;
-    const idx = Math.abs(hash + 10 + i) % otherCatActions.length;
-    chosenActionsList.push(otherCatActions[idx]);
-    otherCatActions.splice(idx, 1);
-  }
+  // Use shared utility for deterministic action selection
+  const chosenActionsList = getDeterministicDailyActions(userId, today, topCategory);
 
   const dailyActions = chosenActionsList.map(a => ({
     id: a.actionId,

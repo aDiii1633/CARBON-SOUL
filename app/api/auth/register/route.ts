@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db/prisma';
 import { insforge } from '@/lib/db/insforge';
 import { registerSchema } from '@/lib/validations/user';
+import { logger } from '@/lib/utils/logger';
 import bcrypt from 'bcryptjs';
 
 export async function POST(req: Request) {
@@ -58,12 +59,12 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, userId: user.id }, { status: 201 });
   } catch (error: unknown) {
-    console.error('Registration API error:', error);
+    logger.error('POST /api/auth/register', error);
     const err = error as { code?: string };
     // Handle unique constraint violation on email
     if (err.code === 'P2002') {
-      return NextResponse.json({ error: 'An account with this email already exists' }, { status: 409 });
+      return NextResponse.json({ error: 'An account with this email already exists. Please try signing in instead.' }, { status: 409 });
     }
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 550 });
+    return NextResponse.json({ error: 'Registration failed. Please try again later.' }, { status: 500 });
   }
 }

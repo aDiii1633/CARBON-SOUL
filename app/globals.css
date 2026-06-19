@@ -49,6 +49,19 @@
     text-wrap: balance;
   }
   
+  /* Screen-reader only utility (accessible skip-nav, labels, etc.) */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
   /* Neomorphism Utilities */
   .neo-flat {
     background: var(--background);
@@ -68,5 +81,17 @@
   .neo-pressed-sm {
     background: var(--background);
     box-shadow: inset 4px 4px 8px #c4d7cd, inset -4px -4px 8px #fcffff;
+  }
+}
+
+/* Accessibility: Respect user preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
