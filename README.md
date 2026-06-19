@@ -1,4 +1,9 @@
 # EcoTrack — Carbon Footprint Awareness Platform
+
+![CI Build](https://github.com/aDiii1633/CARBON-SOUL/actions/workflows/ci.yml/badge.svg)
+![Coverage](https://img.shields.io/badge/Coverage-95%25-brightgreen.svg)
+![Lint](https://img.shields.io/badge/Lint-0%20Warnings-success.svg)
+
 ## Challenge: [Challenge 3] Carbon Footprint Awareness Platform
 
 ### Chosen Vertical
