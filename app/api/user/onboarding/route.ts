@@ -23,7 +23,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const parsed = profileSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: 'Invalid profile data', details: parsed.error.format() }, { status: 400 });
+      return NextResponse.json({ error: 'Invalid profile data' }, { status: 400 });
     }
 
     const {

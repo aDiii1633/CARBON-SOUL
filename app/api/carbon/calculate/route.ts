@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const parsed = carbonLogSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: 'Invalid input data', details: parsed.error.format() }, { status: 400 });
+      return NextResponse.json({ error: 'Invalid input data' }, { status: 400 });
     }
 
     const { category, activity, amount, unit, co2Kg, notes } = parsed.data;

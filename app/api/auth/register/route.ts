@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const parsed = registerSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: 'Invalid register data', details: parsed.error.format() }, { status: 400 });
+      return NextResponse.json({ error: 'Invalid register data' }, { status: 400 });
     }
 
     const { email, password, name } = parsed.data;
