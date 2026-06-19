@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { logger } from '@/lib/utils/logger';
 import { MessageSquare, X, Send, Bot, HelpCircle, Sparkles } from 'lucide-react';
 import { Button, Card, CardHeader, CardTitle, CardContent, Input } from '@/components/ui';
 
@@ -93,7 +94,7 @@ export default function AIChatAssistant() {
         }
       }
     } catch (error) {
-      console.error(error);
+      logger.error('AIChat', error);
       setMessages((prev) => [
         ...prev,
         {

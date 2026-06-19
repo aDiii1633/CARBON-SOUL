@@ -4,13 +4,15 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { Globe, ArrowLeft, ArrowRight, Check } from 'lucide-react';
-import { Card, CardTitle, CardDescription, Button, Label, Select, Progress, Slider } from '@/components/ui';
+import { logger } from '@/lib/utils/logger';
+import { CardTitle, CardDescription, Button, Label, Select, Progress, Slider } from '@/components/ui';
 
 export default function OnboardingPage() {
   const router = useRouter();
   const { status } = useSession();
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Form State
   const [country, setCountry] = useState('IN');
@@ -52,6 +54,7 @@ export default function OnboardingPage() {
 
   const handleSubmit = async () => {
     setIsLoading(true);
+    setError(null);
     try {
       const res = await fetch('/api/user/onboarding', {
         method: 'POST',
@@ -68,15 +71,17 @@ export default function OnboardingPage() {
         }),
       });
 
+      const data = await res.json();
+
       if (res.ok) {
         router.push('/dashboard');
         router.refresh();
       } else {
-        alert('Failed to save onboarding details. Please try again.');
+        setError(data.error || 'Something went wrong. Please try again.');
       }
     } catch (e) {
-      console.error(e);
-      alert('An error occurred during onboarding submission.');
+      logger.error('Onboarding', e);
+      setError('A network error occurred. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -103,9 +108,14 @@ export default function OnboardingPage() {
 
       {/* Steps Card */}
       <div className="flex-1 flex items-center justify-center max-w-xl mx-auto w-full mb-12">
-        <Card className="w-full bg-white border border-gray-250/70 shadow-lg rounded-2xl p-6 min-h-[420px] flex flex-col justify-between relative overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 via-emerald-400 to-teal-400" />
-          <div>
+        <div className="bg-white rounded-xl shadow-xl shadow-green-900/5 p-8 max-w-2xl mx-auto neo-flat relative overflow-hidden mt-6 w-full">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-bl-full -mr-16 -mt-16 z-0"></div>
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 text-red-700 text-sm rounded-md border border-red-200 relative z-10">
+              {error}
+            </div>
+          )}
+          <div className="relative z-10">
             {step === 1 && (
               <div className="space-y-5">
                 <div>
@@ -360,7 +370,7 @@ export default function OnboardingPage() {
               {step === 5 ? <Check className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
             </Button>
           </div>
-        </Card>
+        </div>
       </div>
 
       <div className="text-center text-xs text-gray-400">

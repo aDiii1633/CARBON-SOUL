@@ -104,6 +104,7 @@ export default function Sidebar() {
         {/* Logout button */}
         <button
           onClick={handleSignOut}
+          aria-label="Sign Out"
           className="w-full flex items-center justify-center space-x-2 py-2 px-4 rounded-md text-xs font-semibold text-gray-400 hover:text-white hover:bg-green-900/30 transition border border-green-900/30"
         >
           <LogOut className="h-3.5 w-3.5" />

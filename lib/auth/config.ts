@@ -3,6 +3,7 @@ import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
 import { insforge } from '../db/insforge';
 import { prisma } from '../db/prisma';
+import { logger } from '../utils/logger';
 
 export const authConfig = {
   providers: [
@@ -25,7 +26,7 @@ export const authConfig = {
         });
 
         if (error || !data || !data.user) {
-          console.error('InsForge sign-in authentication error:', error);
+          logger.error('Auth/SignIn', error || 'No InsForge user data returned');
           return null;
         }
 

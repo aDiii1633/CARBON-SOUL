@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { User, ShieldCheck, HelpCircle } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, Button, Input, Label, Select } from '@/components/ui';
+import { logger } from '@/lib/utils/logger';
 
 export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -38,7 +39,7 @@ export default function ProfilePage() {
           }
         }
       } catch (e) {
-        console.error('Error loading profile:', e);
+        logger.error('ProfilePage/Load', e);
       } finally {
         setIsLoading(false);
       }
@@ -72,7 +73,7 @@ export default function ProfilePage() {
         alert('Failed to update profile. Please try again.');
       }
     } catch (err) {
-      console.error(err);
+      logger.error('ProfilePage/Save', err);
       alert('Error connecting to onboarding API.');
     } finally {
       setIsSaving(false);

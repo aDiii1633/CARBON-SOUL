@@ -32,7 +32,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
       <div className="flex items-center space-x-4">
         <button
           onClick={onMenuClick}
-          aria-label="Open navigation menu"
+          aria-label="Toggle Navigation Menu"
           className="lg:hidden p-2 text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-600 rounded-md"
         >
           <Menu className="h-6 w-6" />

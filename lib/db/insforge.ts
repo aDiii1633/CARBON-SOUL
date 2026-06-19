@@ -1,10 +1,11 @@
 import { createClient } from '@insforge/sdk';
+import { logger } from '../utils/logger';
 
 const baseUrl = process.env.NEXT_PUBLIC_INSFORGE_URL;
 const anonKey = process.env.NEXT_PUBLIC_INSFORGE_ANON_KEY;
 
 if (!baseUrl || !anonKey) {
-  console.warn('InsForge credentials missing from environment. Realtime and auth SDK calls might fail.');
+  logger.warn('InsForge', 'InsForge credentials missing from environment. Realtime and auth SDK calls might fail.');
 }
 
 export const insforge = createClient({

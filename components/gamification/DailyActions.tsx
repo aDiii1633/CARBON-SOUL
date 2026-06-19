@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useAppStore } from '@/lib/store';
+import { logger } from '@/lib/utils/logger';
 import { CheckSquare, Check, Sparkles, Sprout, Car, Zap, Utensils, ShoppingBag, Trash2, LucideIcon } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { Button } from '@/components/ui';
@@ -44,7 +45,7 @@ export default function DailyActions() {
         alert('Could not complete the action. Please try again.');
       }
     } catch (e) {
-      console.error(e);
+      logger.error('DailyActions', e);
       alert('Error updating action status.');
     } finally {
       setCompletingId(null);

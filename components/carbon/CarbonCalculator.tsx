@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { useAppStore } from '@/lib/store';
+import { logger } from '@/lib/utils/logger';
 import {
   calculateTransportEmissions,
   calculateEnergyEmissions,
@@ -185,7 +186,7 @@ export default function CarbonCalculator() {
         alert('Failed to log entry. Please try again.');
       }
     } catch (e) {
-      console.error(e);
+      logger.error('CarbonCalculator', e);
       alert('Error connecting to logging API.');
     } finally {
       setIsLogging(false);

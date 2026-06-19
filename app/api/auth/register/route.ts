@@ -23,7 +23,7 @@ export async function POST(req: Request) {
     });
 
     if (insforgeError || !insforgeData || !insforgeData.user) {
-      console.error('InsForge Sign-Up Error:', insforgeError);
+      logger.error('Auth/Register', insforgeError || 'No InsForge user data returned');
       return NextResponse.json({ error: insforgeError?.message || 'InsForge sign-up failed' }, { status: 400 });
     }
 

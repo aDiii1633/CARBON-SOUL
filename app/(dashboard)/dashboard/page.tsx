@@ -3,7 +3,16 @@
 import React from 'react';
 import { useAppStore } from '@/lib/store';
 import { Card, CardContent } from '@/components/ui';
-import { EmissionsChart, CategoryBreakdown } from '@/components/carbon';
+import dynamic from 'next/dynamic';
+
+const EmissionsChart = dynamic(() => import('@/components/carbon/EmissionsChart'), { 
+  ssr: false, 
+  loading: () => <div className="h-[300px] flex items-center justify-center text-sm text-gray-500">Loading chart...</div> 
+});
+const CategoryBreakdown = dynamic(() => import('@/components/carbon/CategoryBreakdown'), { 
+  ssr: false,
+  loading: () => <div className="h-[250px] flex items-center justify-center text-sm text-gray-500">Loading breakdown...</div> 
+});
 import { DailyActions, StreakTracker, ProgressBar, BadgeDisplay } from '@/components/gamification';
 import { Leaf, Flame, Shield, TrendingDown } from 'lucide-react';
 
