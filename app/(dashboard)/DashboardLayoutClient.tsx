@@ -23,7 +23,7 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
         <Navbar onMenuClick={() => setMobileMenuOpen(true)} />
 
         {/* Main Content Area */}
-        <main className="flex-1 p-6 lg:p-8 pt-20 pb-24 overflow-y-auto">
+        <main className="flex-1 p-6 pt-24 lg:p-8 lg:pt-24 pb-24 overflow-y-auto">
           <div className="max-w-6xl mx-auto w-full">
             {children}
           </div>
