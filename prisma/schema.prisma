@@ -1,0 +1,91 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id              String   @id @default(cuid())
+  name            String?
+  email           String   @unique
+  password        String?
+  createdAt       DateTime @default(now())
+  profile         UserProfile?
+  carbonLogs      CarbonLog[]
+  dailyActions    DailyAction[]
+  streaks         Streak?
+  badges          Badge[]
+}
+
+model UserProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  country         String   @default("IN")
+  transportMode   String   @default("car")
+  dietType        String   @default("omnivore")
+  homeType        String   @default("apartment")
+  householdSize   Int      @default(2)
+  electricityKwh  Float    @default(0)
+  weeklyDriveKm   Float    @default(0)
+  flightsPerYear  Int      @default(0)
+}
+
+model CarbonLog {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date            DateTime @default(now())
+  category        String   // transport | energy | food | shopping | waste
+  activity        String
+  amount          Float
+  unit            String
+  co2Kg           Float
+  notes           String?
+
+  @@index([userId, date])
+  @@index([userId])
+}
+
+model DailyAction {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  actionId        String
+  title           String
+  category        String
+  co2SavedKg      Float
+  completedAt     DateTime @default(now())
+  date            String   // YYYY-MM-DD format
+  points          Int
+
+  @@index([userId])
+}
+
+model Streak {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currentStreak   Int      @default(0)
+  longestStreak   Int      @default(0)
+  lastActiveDate  String?
+  totalPoints     Int      @default(0)
+  level           Int      @default(1)
+
+  @@index([userId])
+}
+
+model Badge {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badgeId         String
+  name            String
+  description     String
+  earnedAt        DateTime @default(now())
+
+  @@index([userId])
+}

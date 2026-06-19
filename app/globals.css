@@ -2,26 +2,71 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #E0EBE5; /* Soft greyish green */
+    --foreground: #2d4a3e; /* Dark forest green for text */
+    
+    --card: #E0EBE5;
+    --card-foreground: #2d4a3e;
+
+    --popover: #E0EBE5;
+    --popover-foreground: #2d4a3e;
+
+    --primary: #4ade80; /* bright green */
+    --primary-foreground: #ffffff;
+
+    --secondary: #d1e2d9;
+    --secondary-foreground: #1c3328;
+
+    --muted: #c8d9d0;
+    --muted-foreground: #4a6859;
+
+    --accent: #bbf7d0;
+    --accent-foreground: #14532d;
+
+    --destructive: #ef4444;
+    --destructive-foreground: #ffffff;
+
+    --border: #c4d7cd;
+    --input: #E0EBE5;
+    --ring: #4ade80;
+
+    --radius: 1rem;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: Arial, Helvetica, sans-serif;
+  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  
+  /* Neomorphism Utilities */
+  .neo-flat {
+    background: var(--background);
+    box-shadow: 8px 8px 16px #c4d7cd, -8px -8px 16px #fcffff;
+  }
+  
+  .neo-pressed {
+    background: var(--background);
+    box-shadow: inset 6px 6px 12px #c4d7cd, inset -6px -6px 12px #fcffff;
+  }
+  
+  .neo-flat-sm {
+    background: var(--background);
+    box-shadow: 4px 4px 8px #c4d7cd, -4px -4px 8px #fcffff;
+  }
+  
+  .neo-pressed-sm {
+    background: var(--background);
+    box-shadow: inset 4px 4px 8px #c4d7cd, inset -4px -4px 8px #fcffff;
   }
 }
