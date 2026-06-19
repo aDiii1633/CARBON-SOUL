@@ -3,6 +3,7 @@
 ![CI Build](https://github.com/aDiii1633/CARBON-SOUL/actions/workflows/ci.yml/badge.svg)
 ![Coverage](https://img.shields.io/badge/Coverage-95%25-brightgreen.svg)
 ![Lint](https://img.shields.io/badge/Lint-0%20Warnings-success.svg)
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
 
 ## Challenge: [Challenge 3] Carbon Footprint Awareness Platform
 
@@ -32,6 +33,13 @@ Gamification mechanics reward users with points (XP) for logging entries and com
 
 ### AI Integration
 EcoTrack uses the **Anthropic Claude API** with Server-Sent Events (SSE) to stream responses. The system prompts inject the user's weekly carbon totals, top category emissions, current level, and streak count, enabling EcoBot to provide concrete, highly contextual advice.
+
+### Project Architecture
+The application employs a strict **Service Layer Pattern**:
+- **API Routes** (`app/api/`) act strictly as thin controllers parsing input and checking authentication.
+- **Services** (`lib/services/`) execute the core business logic, orchestrating database transactions through Prisma.
+- **State Management** happens client-side via `Zustand`.
+For more details, view the [Architecture Documentation](docs/ARCHITECTURE.md).
 
 ### Carbon Calculation Methodology
 We utilize standard DEFRA/IPCC 2023 factors:
